@@ -6,7 +6,7 @@ public abstract class FigureArea {
 	
 	 abstract int size();
 	 
-	 public void main(int[] args) {
+	 public static void main(String[] args) {
 		 Rectangle rect = new Rectangle(4, 5);
 		 Triangle tri = new Triangle(4, 5);
 		 
