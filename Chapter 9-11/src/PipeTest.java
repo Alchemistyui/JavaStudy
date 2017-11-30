@@ -16,6 +16,9 @@ public class PipeTest {
 		
 		Consumer consumer = new Consumer("消费者", in);
 		Producer producer = new Producer("生产者", out);
+		
+		consumer.start();
+		producer.start();
 	}
 
 }
