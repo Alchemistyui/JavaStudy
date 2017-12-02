@@ -36,6 +36,7 @@ public class IOStream {
 		
 		bw.flush();
 		bw.close();
+		fw.close();
 
 	}
 

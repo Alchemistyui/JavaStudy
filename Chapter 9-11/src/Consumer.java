@@ -1,37 +1,37 @@
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.PipedReader;
 
 public class Consumer extends Thread {
 
 	String consumerName;
 
-	DataInputStream in;
+	PipedReader in;
 	
-	public Consumer(String consumerName, InputStream i) {
+	public Consumer(String consumerName, PipedReader i) {
 		this.consumerName = consumerName;
-		in = new DataInputStream(i);
+		in = i;
 	}
 
 	@Override
 	public void run() {
 		
 		int foodNum = 0;
-		try {
-			foodNum = in.readInt();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		System.out.println(foodNum);
+		
+		
+		
 		
 		while (true) {
 			
-		
+		try {
+			foodNum = in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 			if (foodNum == 0) {
 				System.out.println("box is empty,size = " + foodNum);
 				break;
+				
 				
 			}
 			foodNum--;

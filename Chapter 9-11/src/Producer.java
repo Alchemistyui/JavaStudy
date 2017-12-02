@@ -1,6 +1,5 @@
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PipedWriter;
 
 public class Producer extends Thread {
 
@@ -8,12 +7,12 @@ public class Producer extends Thread {
 	int MAX_SIZE = 5;
 	String producerName;
 	
-	DataOutputStream out;
+	PipedWriter out;
 
-	public Producer(String producerName, OutputStream o)
+	public Producer(String producerName, PipedWriter o)
 	{
 		this.producerName = producerName;
-		out = new DataOutputStream(o);
+		out = o;
 
 	}
 
@@ -22,14 +21,21 @@ public class Producer extends Thread {
 	{
 		while (true)
 		{
-			if (foodNum == MAX_SIZE)
+			if (foodNum >= MAX_SIZE)
 			{
 				System.out.println("box is full，size = " + foodNum);
 				break;
+//				try {
+//					sleep(3000);
+//					continue;
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 			foodNum++;
 			try {
-				out.writeInt(foodNum);
+				out.write(foodNum);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
