@@ -15,27 +15,20 @@ public class Consumer extends Thread {
 	@Override
 	public void run() {
 		
-		int foodNum = 0;
+		int integer = 0;
 		
 		
 		
 		
-		while (true) {
+		for (int i = 0; i < Producer.MAX_NUM; i++) {
 			
 		try {
-			foodNum = in.read();
+			integer = in.read();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			if (foodNum == 0) {
-				System.out.println("box is empty,size = " + foodNum);
-				break;
-				
-				
-			}
-			foodNum--;
-			System.out.println("consume success foodNum = " + foodNum);
+			System.out.println("consume success get integer = " + integer);
 
 
 		}

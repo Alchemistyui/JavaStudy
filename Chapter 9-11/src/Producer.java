@@ -3,8 +3,8 @@ import java.io.PipedWriter;
 
 public class Producer extends Thread {
 
-	int foodNum = 0;
-	int MAX_SIZE = 5;
+	int integer = 0;
+	static int MAX_NUM = 5;
 	String producerName;
 	
 	PipedWriter out;
@@ -19,28 +19,15 @@ public class Producer extends Thread {
 	@Override
 	public void run()
 	{
-		while (true)
-		{
-			if (foodNum >= MAX_SIZE)
-			{
-				System.out.println("box is full，size = " + foodNum);
-				break;
-//				try {
-//					sleep(3000);
-//					continue;
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-			}
-			foodNum++;
+		for (int i = 0; i < MAX_NUM; i++) {
 			try {
-				out.write(foodNum);
+				integer=1+(int)(Math.random()*50);
+				out.write(integer);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("produce success foodNum = " + foodNum);
+			System.out.println("produce success integer = " + integer);
 
 		}
 	}
