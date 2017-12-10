@@ -21,8 +21,8 @@ public class IOStream {
 		
 		f.createNewFile();
 		
-			FileWriter fw = new FileWriter(f);
-			BufferedWriter bw = new BufferedWriter(fw);
+		FileWriter fw = new FileWriter(f);
+		BufferedWriter bw = new BufferedWriter(fw);
 		
 		
 		String data;
