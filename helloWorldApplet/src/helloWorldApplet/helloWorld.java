@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class helloWorld extends Applet {
 
-	String str = "世界你很好！";   
+	String str = "Welcome to Java applet world！";   
     public void paint(Graphics g)
     {
         g.drawString(str, 50, 50);
