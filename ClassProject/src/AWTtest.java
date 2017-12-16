@@ -44,7 +44,7 @@ public class AWTtest {
 		f.setMenuBar(menuBar);
 
 		f.setSize(320, 240);
-		f.show();
+		f.setVisible(true);
 
 		// System.out.println(button0.getWidth() + " " + button0.getHeight());
 

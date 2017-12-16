@@ -4,7 +4,7 @@ public class ExceptionTest {
 
 	public static void main(String[] args) throws IllegalScoreException {
 
-		System.out.println(args[2]);
+//		System.out.println(args[2]);
 		
 //		try {
 
