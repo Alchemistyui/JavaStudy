@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-
 public class ChatServer {
 
 	boolean stop = false;
@@ -19,12 +18,8 @@ public class ChatServer {
 
 	ChatServer() throws IOException {
 		ServerSocket server = new ServerSocket(8001);
-		while (!stop) {
-			Socket socket = server.accept();
-			ServerAgent ca = new ServerAgent(socket);
-			serverAgents.add(ca);
-			ca.start();
-		}
+		Socket socket = server.accept();
+
 	}
 
 	public static void main(String[] args) throws IOException {
