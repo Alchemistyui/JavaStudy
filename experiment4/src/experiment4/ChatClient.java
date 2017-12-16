@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ChatClient {
-	boolean stop = false;
+
 
 	ChatClient() throws IOException {
 		Socket socket = new Socket("127.0.0.1", 8001);
@@ -31,7 +31,7 @@ public class ChatClient {
 
 	class InputAgent extends Thread {
 		BufferedReader br;
-
+		boolean stop = false;
 		InputAgent(InputStream is) {
 			br = new BufferedReader(new InputStreamReader(is));
 		}
@@ -60,6 +60,7 @@ public class ChatClient {
 
 	class OutputAgent extends Thread {
 		BufferedWriter bw;
+		boolean stop = false;
 		Scanner sc = new Scanner(System.in);
 
 		OutputAgent(OutputStream os) {
