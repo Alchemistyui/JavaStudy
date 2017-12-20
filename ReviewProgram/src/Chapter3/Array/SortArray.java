@@ -3,7 +3,7 @@ package Chapter3.Array;
 public class SortArray {
 
 	public static void main(String[] args) {
-		int SIZE = 6;
+		final int SIZE = 6;
 		int temp;
 		int[] sim = {7,2,3,8,6,1};
 		
