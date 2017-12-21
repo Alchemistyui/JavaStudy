@@ -33,6 +33,7 @@ public class ArrayTest {
 		System.out.println("input: ");
 		Scanner sc = new Scanner(System.in);
 		
+		
 		int max = sc.nextInt();
 		for (int i = 0; i<max;i++) {
 			System.out.println(fibonacci(i+1));
