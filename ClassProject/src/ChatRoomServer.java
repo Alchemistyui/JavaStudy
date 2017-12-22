@@ -17,6 +17,7 @@ public class ChatRoomServer {
 			clientAgents.add(ca);
 			ca.start();
 		}
+		server.close();
 	}
 
 	boolean stop = false;

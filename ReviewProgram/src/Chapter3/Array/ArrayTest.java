@@ -39,6 +39,6 @@ public class ArrayTest {
 			System.out.println(fibonacci(i+1));
 		}
 		
-		
+		sc.close();
 	}
 }

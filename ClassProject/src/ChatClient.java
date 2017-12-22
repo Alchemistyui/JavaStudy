@@ -18,6 +18,7 @@ public class ChatClient {
 		ServerAgent sa = new ServerAgent(is);
 		ia.start();
 		sa.start();
+		socket.close();
 	}
 
 	public static void main(String args[]) throws Exception {

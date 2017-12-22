@@ -37,6 +37,7 @@ public class Fibonacci {
 
 		Fibonacci fib = new Fibonacci(number);
 		fib.print(number);
+		scanner.close();
 	}
 
 }

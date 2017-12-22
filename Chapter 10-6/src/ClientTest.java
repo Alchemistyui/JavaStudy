@@ -21,6 +21,7 @@ public class ClientTest {
 		
 		ia.start();
 		sa.start();
+		socket.close();
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {

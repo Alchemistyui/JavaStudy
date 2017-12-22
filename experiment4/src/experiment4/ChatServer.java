@@ -25,6 +25,7 @@ public class ChatServer {
 			serverAgents.add(ca);
 			ca.start();
 		}
+		server.close();
 	}
 
 	public static void main(String[] args) throws IOException {

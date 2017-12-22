@@ -25,11 +25,14 @@ public class ExceptionTest {
 		String name = sc.nextLine();
 		System.out.print("请输入学生的成绩：");
 		int score = sc.nextInt();
+		sc.close();
 		if (score < 0 || score > 100) {
 			IllegalScoreException e = new IllegalScoreException(score);
 			throw e;
 		}
+		
 		return name + "的成绩是:" + score;
+		
 	}
 
 }

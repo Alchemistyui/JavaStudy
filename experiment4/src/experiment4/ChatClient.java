@@ -22,6 +22,7 @@ public class ChatClient {
 		OutputAgent oa = new OutputAgent(os);
 		ia.start();
 		oa.start();
+		socket.close();
 	}
 
 	public static void main(String[] args) throws IOException {

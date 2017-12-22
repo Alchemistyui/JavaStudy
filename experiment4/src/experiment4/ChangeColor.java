@@ -53,7 +53,7 @@ public class ChangeColor {
 		f.add(blue);
 		
 		f.setSize(320, 240);
-		f.show();
+		f.setVisible(true);
 	}
 
 }

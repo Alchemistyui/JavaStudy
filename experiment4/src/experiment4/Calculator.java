@@ -85,7 +85,7 @@ public class Calculator {
 		
 
 		f.setSize(320, 240);
-		f.show();
+		f.setVisible(true);
 	}
 
 }

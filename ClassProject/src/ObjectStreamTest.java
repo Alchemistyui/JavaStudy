@@ -19,6 +19,7 @@ public class ObjectStreamTest {
 			File f2 = (File) o;
 			System.out.println(f2.equals(f));
 		}
+		ois.close();
 
 	}
 

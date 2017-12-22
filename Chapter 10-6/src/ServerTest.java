@@ -36,5 +36,6 @@ public class ServerTest {
 		bw.close();
 		br.close();
 		socket.close();
+		server.close();
 	}
 }

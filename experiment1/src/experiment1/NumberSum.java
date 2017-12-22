@@ -28,7 +28,7 @@ public class NumberSum {
 		NumberSum num = new NumberSum(integer);
 
 		System.out.println("这个整数的各位数字之和为：" + num.addNumber());
-
+		scanner.close();
 	}
 
 }

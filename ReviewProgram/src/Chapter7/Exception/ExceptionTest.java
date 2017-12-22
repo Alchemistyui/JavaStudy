@@ -7,7 +7,7 @@ public class ExceptionTest {
 
 		try {
 			int a = 0;
-			int b = 9 / 0;
+			int b = 9 / a;
 		}
 		catch(ArithmeticException e) {
 			System.out.println("Exception message: " + e.getMessage());
