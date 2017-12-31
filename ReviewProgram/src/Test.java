@@ -9,7 +9,11 @@ public class Test {
 //		System.out.println(y);
 		String x = null;
 		
-		int y = (x!=null)&&(x.length()>0)?x.length() : 0;
+//		int y = (x!=null)&&(x.length()>0)?x.length() : 0;
+		
+//		System.out.println(y);  //0
+	
+		int y = x.length();
 		
 		System.out.println(y);
 	}
