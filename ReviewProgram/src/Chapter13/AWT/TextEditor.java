@@ -24,7 +24,7 @@ public class TextEditor {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if (e.getSource() == textField) {
-					textField.setText(""); // 在文本框按下回车键，将文本框内容清空，并在其中显示"Hello World!
+					textField.setText(""); // 在文本框按下回车键，将文本框内容清空，并在其中显示"233
 					textField.setText("233");
 				}
 			}
