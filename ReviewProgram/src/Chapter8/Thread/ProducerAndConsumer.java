@@ -44,7 +44,7 @@ class GoodsBox {
 	public void consume(String name) {
 		while(goods != 0) {
 			synchronized(this) {
-				while (goods == 0) {
+				if (goods == 0) {
 					System.out.println("box is empty~");
 					try {
 						wait();
