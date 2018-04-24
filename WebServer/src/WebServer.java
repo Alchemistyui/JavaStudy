@@ -8,73 +8,100 @@ import java.io.OutputStreamWriter;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import java.io.FileNotFoundException;
 
 public class WebServer {
 
 	public static void main(String[] args) throws IOException {
-		String path = "/Users/ryshen/Desktop/";
+		String path = "/Users/ryshen/Desktop/编程/WebStudy/webServerResource/";
 		ServerSocket serverSocket = new ServerSocket(8888);
-		
-		System.out.println("Serving HTTP on port %s ...");
-			
+
+		System.out.println("Serving HTTP  ...");
+
 		while (true) {
-            Socket accept = serverSocket.accept();
+			Socket accept = serverSocket.accept();
 
-            InputStream inputStream = accept.getInputStream();
+			InputStream inputStream = accept.getInputStream();
 
-            // 得到请求链接
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-            String url = br.readLine();
-            
-            String html = "";
-            try {
-                //打得到请求网页名
-                html = url.split(" ")[1];
-            } catch (Exception e) {
-                continue;
-            }
-            //设置默认网页为index.html
-            if (html.equals("/")) {
-                html = "InitialPages.vue";
-            }
-            //不处理图片请求
-            if (html.equals("/console.html")) {
-            		html = "console.html";
-            }
+			// 得到请求链接
 
-            String newPath = path + html;
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			String url = br.readLine();
 
-            // 读取服务器本地文件
-            File file = new File(newPath);
+			// System.out.println("url ..."+url);
 
-            BufferedReader fbr = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			String resource = "";
+			try {
+				// 打得到请求网页名
+				resource = url.split(" ")[1];
+				// 设置默认网页为index.html
+				if (resource.equals("/")) {
+					resource = "index.html";
+				}
 
-            BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(accept.getOutputStream()));
+				// int index2 = url.indexOf(" ", index);
+				// System.out.println("index "+index);
+				// System.out.println("html ..."+resource.substring(index));
 
-            String readLine = null;
+			} catch (Exception e) {
+				continue;
+			}
 
-            //标准头部
-            fbw.write("HTTP/1.1 200 OK\r\n");
-            fbw.write("Content-type:text/html;charset=UTF-8\r\n");
-            fbw.write("\r\n");
+			String newPath = path + resource;
+			
+				// 读取服务器本地文件
+				File file = new File(newPath);
 
-            //一行一行读取文件并输出到网页
-            while ((readLine = fbr.readLine()) != null) {
-            	fbw.write(readLine);
-            	fbw.newLine();
-            }
-            fbw.flush();
+				BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(accept.getOutputStream()));
 
-            fbw.close();
+				if (!file.exists()) {
+					fbw.write("HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
+	                        + "Content-Length: 23\r\n" + "\r\n" + "<h1>File Not Found</h1>");
+					System.out.println("404");
+					continue;
+				}
+				
+				BufferedReader fbr = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+				
+				String readLine = null;
+				int index = resource.indexOf(".");
+				String type = resource.substring(index + 1);
+				// System.out.println(type);
+				// System.out.println("html ..."+resource.substring(index));
+				// 标准头部
+//				 if(type == "html") {
+				fbw.write("HTTP/1.1 200 OK\r\n" + "Content-Type:text/html\r\n" + "\r\n");
+//				 }
+				// if(type == "html") {
+				//// System.out.println("html");
+				// fbw.write("Content-Type:text/html\r\n");
+				// }
+				// else if (type == "png") {
+				// fbw.write("HTTP/1.1 200 OK\r\n"
+				// + "Content-Type:image/png\r\n"
+				// + "\r\n");
+				// }
+				// fbw.write("\r\n");
 
-            fbr.close();
+				// System.out.println("emmmm");
+				// 一行一行读取文件并输出到网页
+				while ((readLine = fbr.readLine()) != null) {
+					fbw.write(readLine);
+					fbw.newLine();
+				}
 
-            accept.close();
+				fbw.flush();
+
+				fbw.close();
+
+				fbr.close();
+
+				accept.close();
+//			} catch (FileNotFoundException e) {
+//				String errorMessage = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
+//                        + "Content-Length: 23\r\n" + "\r\n" + "<h1>File Not Found</h1>";
+//				fbw.write(errorMessage.getBytes());
+//			}
 		}
 	}
 }
-		
-		
-		
