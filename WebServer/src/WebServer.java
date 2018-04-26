@@ -82,7 +82,7 @@ public class WebServer {
 				} else if (type == "png") {
 					contentType = "image/png";
 				} else if (type == "jpg") {
-					contentType = "image/jpeg";
+					contentType = "application/x-jpg";
 				} else if (type == "css") {
 					contentType = "text/css";
 				} else if (type == "js") {
