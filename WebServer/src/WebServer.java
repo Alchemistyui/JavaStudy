@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,8 +25,7 @@ public class WebServer {
 
 			InputStream inputStream = accept.getInputStream();
 
-			// 得到请求链接
-
+			// 得到请求报文第一行
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			String url = br.readLine();
 
@@ -32,7 +33,7 @@ public class WebServer {
 
 			String resource = "";
 			try {
-				// 打得到请求网页名
+				// 取得请求资源路径
 				resource = url.split(" ")[1];
 				System.out.println(resource);
 				// 设置默认网页为index.html
@@ -47,14 +48,10 @@ public class WebServer {
 			} catch (Exception e) {
 				continue;
 			}
-
+//			获取本地绝对路径
 			String newPath = path + resource;
 
-			// 读取服务器本地文件
-			File file = new File(newPath);
-
-			BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(accept.getOutputStream()));
-
+			
 			// if (!file.exists()) {
 			// String head = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type:
 			// text/html\r\n";
@@ -67,29 +64,39 @@ public class WebServer {
 			// else {
 			// System.out.println(file.getName());
 			// }
+			BufferedOutputStream fbw = null;
+			BufferedInputStream fbr = null;
 			try {
-				BufferedReader fbr = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+				
+				// 读取服务器本地文件
+				File file = new File(newPath);
+//				建立写管道
+				fbw = new BufferedOutputStream(accept.getOutputStream());
 
+				fbr = new BufferedInputStream(new FileInputStream(file));
+//				读取获得所需请求资源类型
 				String readLine = null;
 				String contentType = "";
 				int index = resource.indexOf(".");
 				String type = resource.substring(index + 1);
 				// System.out.println(type);
 				// System.out.println("html ..."+resource.substring(index));
-				// 标准头部
+				
+				
+				// 响应报文标准头部
 				if (type == "html") {
 					contentType = "text/html;charset=utf-8";
-				} else if (type == "png") {
+				} else if (type.equals("png")) {
 					contentType = "image/png";
-				} else if (type == "jpg") {
+				} else if (type.equals("jpg")) {
 					contentType = "application/x-jpg";
-				} else if (type == "css") {
+				} else if (type.equals("css")) {
 					contentType = "text/css";
-				} else if (type == "js") {
+				} else if (type.equals("js")) {
 					contentType = "application/x-javascript";
 				}
 				String head = "HTTP/1.1 200 OK\r\n" + "Content-Type:" + contentType + "\r\n" + "\r\n";
-				head = new String(head.getBytes("gbk"), "utf-8");
+				head = new String(head.getBytes("utf-8"), "utf-8");
 				// fbw.write(head);
 				// }
 				// if(type == "html") {
@@ -104,21 +111,24 @@ public class WebServer {
 				// fbw.write("\r\n");
 
 				// System.out.println("emmmm");
-				// 一行一行读取文件并输出到网页
-				String data = "";
-				// = fbr.read();
-				while ((readLine = fbr.readLine()) != null) {
-					data += readLine;
-					// fbw.newLine();
-				}
-				fbw.write(head + data);
-				fbw.flush();
-
-				fbw.close();
-
-				fbr.close();
-
-				accept.close();
+				
+				 int len = 0;
+		            //byte[] bytes = new byte[inputStream .available()];
+		            byte[] bytes = new byte[1024];
+		            while ((len = inputStream.read(bytes)) != -1) {
+		                fbw.write(bytes);
+		                fbw.flush();
+		            }
+				// 一行一行读取文件
+//				int data = 0;
+//				 data = fbr.read();
+////				while ((readLine = fbr.readLine()) != null) {
+////					data += readLine;
+////					// fbw.newLine();
+////				}
+////				发送响应报文
+//				fbw.write(head + data);
+				
 				// } catch (FileNotFoundException e) {
 				// String errorMessage = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type:
 				// text/html\r\n"
@@ -129,8 +139,18 @@ public class WebServer {
 			} catch (FileNotFoundException e) {
 				String head = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n";
 				 head = new String(head.getBytes("utf-8"),"utf-8");
-				 fbw.write(head + "\r\n" + "<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n");
+				 byte[] bytes = new byte[1024];
+				 bytes = (head + "\r\n" + "<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n").getBytes();
+				 fbw.write(bytes);
 				 System.out.println("404");
+			} finally {
+				fbw.flush();
+
+				fbw.close();
+
+				fbr.close();
+
+				accept.close();
 			}
 		}
 	}
