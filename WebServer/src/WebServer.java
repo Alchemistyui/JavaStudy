@@ -84,7 +84,7 @@ public class WebServer {
 				
 				
 				// 响应报文标准头部
-				if (type == "html") {
+				if (type.equals("html")) {
 					contentType = "text/html;charset=utf-8";
 				} else if (type.equals("png")) {
 					contentType = "image/png";
@@ -97,7 +97,7 @@ public class WebServer {
 				}
 				String head = "HTTP/1.1 200 OK\r\n" + "Content-Type:" + contentType + "\r\n" + "\r\n";
 				head = new String(head.getBytes("utf-8"), "utf-8");
-				// fbw.write(head);
+				 fbw.write(head.getBytes());
 				// }
 				// if(type == "html") {
 				//// System.out.println("html");
@@ -115,7 +115,7 @@ public class WebServer {
 				 int len = 0;
 		            //byte[] bytes = new byte[inputStream .available()];
 		            byte[] bytes = new byte[1024];
-		            while ((len = inputStream.read(bytes)) != -1) {
+		            while ((len = fbr.read(bytes)) != -1) {
 		                fbw.write(bytes);
 		                fbw.flush();
 		            }
@@ -147,8 +147,9 @@ public class WebServer {
 				fbw.flush();
 
 				fbw.close();
-
-				fbr.close();
+				if (fbr != null) {
+					fbr.close();
+				}
 
 				accept.close();
 			}
