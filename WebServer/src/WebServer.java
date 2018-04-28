@@ -13,19 +13,23 @@ import java.net.Socket;
 import java.io.FileNotFoundException;
 
 public class WebServer {
-	int port = 8888;
-	String path = "/Users/ryshen/Desktop/编程/WebStudy/webServerResource";
+	// 定义服务器端口
+	int port;
+	// 定义服务器文件所在路径
+	String path;
+	ServerSocket serverSocket;
 
-	String getResource() {
-		
+	WebServer() throws IOException {
+		port = 8888;
+		path = "/Users/ryshen/Desktop/编程/WebStudy/webServerResource";
+		// 创建绑定到特定端口的服务器套接字
+		serverSocket = new ServerSocket(port);
+		// 输出表示服务器运作
+		System.out.println("Serving HTTP  ...");
 	}
 
-	public static void main(String[] args) throws IOException {
-		// 定义服务器文件所在路径
-		
-		// 创建绑定到特定端口的服务器套接字
-		ServerSocket serverSocket = new ServerSocket(port);
-		System.out.println("Serving HTTP  ...");
+
+	void serve() throws IOException {
 		// 服务器一直提供服务
 		while (true) {
 			// 接受到套接字的连接
@@ -38,8 +42,23 @@ public class WebServer {
 			// 得到请求报文第一行
 			String url = br.readLine();
 
-			String resource = "";
-			try {
+			String resource = getResource(url);
+			
+			//	获取本地绝对路径
+			String newPath = path + resource;
+
+			if (resource.equals("/console.html")) {
+				returnConsole();
+			}
+			else {
+				responseResource(newPath, accept, resource);
+			}
+		}
+	}
+
+	String getResource(String url) {
+		String resource = "";
+			
 				// 取得请求资源路径
 				resource = url.split(" ")[1];
 				// 查看请求资源
@@ -48,11 +67,14 @@ public class WebServer {
 				if (resource.equals("/")) {
 					resource = "/index.html";
 				}
-			} catch (Exception e) {
-				continue;
-			}
-			//	获取本地绝对路径
-			String newPath = path + resource;
+		return 	resource;
+	}
+
+	void returnConsole() {
+
+	}
+
+	void responseResource(String newPath, Socket accept, String resource) throws IOException {
 			// 读取本地文件的输入管道及本地文件输出到浏览器的管道
 			// 此处只能使用字节流，因为字符流在处理图片时不能显示，图片中的字符变多，可能因为读取了多余的空白字符
 			BufferedOutputStream fos = null;
@@ -72,6 +94,7 @@ public class WebServer {
 				String type = resource.substring(index + 1);
 				
 				// 判断请求资源类型来填充不同的报文首部
+				// 注意字符串比较不能用==，==是比较地址是否相等，equals才是比较字符串内容
 				if (type.equals("html")) {
 					contentType = "text/html;charset=utf-8";
 				} else if (type.equals("png")) {
@@ -119,6 +142,16 @@ public class WebServer {
 				// 连接关闭
 				accept.close();
 			}
-		}
+	}
+
+
+
+	public static void main(String[] args) throws IOException {
+		// 构建服务器对象
+		WebServer server = new WebServer();
+		// 服务器开始提供服务
+		server.serve();
+		
+		
 	}
 }
