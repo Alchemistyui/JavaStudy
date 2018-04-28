@@ -41,27 +41,28 @@ public class WebServer {
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			// 得到请求报文第一行
 			String url = br.readLine();
+			System.out.println(url);
 
-			String resource = getResource(url);
-			System.out.println(resource);
-			//	获取本地绝对路径
-			String newPath = path + resource;
 
 			// if (resource.equals("/console.html")) {
-			// 	returnConsole();
+			// 	returnConsole(newPath, accept, resource);
 			// }
-			if (resource.indexOf("/console.html?")!=-1) {
-				String str = resource.split("=")[1];
+			// else if (resource.indexOf("/console.html?")!=-1) {
+			if (url.split(" ")[1].indexOf("/console.html?")!=-1) {
+				String str = url.split(" ")[1].split("=")[1];
 				// port = (int) resource.split("=");
-				try {
-					port = Integer.parseInt(str);
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				}
-				System.out.println(port);
+				// path = str.replace("%2F", "/");
+				// System.out.println(str.replace("%2F", "/"));
+				path = str.replace("%2F", "/");
+				// System.out.println(path);
 
 			}
 			else {
+				String resource = getResource(url);
+
+			//	获取本地绝对路径
+				String newPath = path + resource;
+			// System.out.println(newPath);
 				responseResource(newPath, accept, resource);
 			}
 		}
@@ -81,21 +82,29 @@ public class WebServer {
 		return 	resource;
 	}
 
-	void returnConsole() {
+	void returnConsole(String newPath, Socket accept, String resource) throws IOException {
+		responseResource(newPath, accept, resource);
 
+		BufferedOutputStream os = new BufferedOutputStream(accept.getOutputStream());
+
+		String head = "HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n";
+		head = new String(head.getBytes("utf-8"),"utf-8");
+		byte[] bytes = new byte[1024];
+		bytes = (head + "\r\n" + "<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n").getBytes();
+		os.write(bytes);
 	}
 
 	void responseResource(String newPath, Socket accept, String resource) throws IOException {
 			// 读取本地文件的输入管道及本地文件输出到浏览器的管道
 			// 此处只能使用字节流，因为字符流在处理图片时不能显示，图片中的字符变多，可能因为读取了多余的空白字符
-		BufferedOutputStream fos = null;
+		BufferedOutputStream os = null;
 		BufferedInputStream fis = null;
 		try {
 
 				// 读取服务器本地文件
 			File file = new File(newPath);
 				// 建立读写管道
-			fos = new BufferedOutputStream(accept.getOutputStream());
+			os = new BufferedOutputStream(accept.getOutputStream());
 			fis = new BufferedInputStream(new FileInputStream(file));
 				// 读取获得所需请求资源类型
 			String readLine = null;
@@ -121,7 +130,7 @@ public class WebServer {
 			String head = "HTTP/1.1 200 OK\r\n" + "Content-Type:" + contentType + "\r\n" + "\r\n";
 			head = new String(head.getBytes("utf-8"), "utf-8");
 				// 向管道写响应报文头部
-			fos.write(head.getBytes());
+			os.write(head.getBytes());
 
 				// 采用read(byte[] b, int off, int len)方法，因为若采用read(byte[] b)方法，
 				// 最后不满1024的时候每次写都会填满缓冲区，造成页面中多余其他元素
@@ -129,8 +138,8 @@ public class WebServer {
 			int len = 0;
 			byte[] bytes = new byte[1024];
 			while ((len = fis.read(bytes)) != -1) {
-				fos.write(bytes, 0, len);
-				fos.flush();
+				os.write(bytes, 0, len);
+				os.flush();
 			}
 
 				// 若请求不存在的文件则返回404报文
@@ -139,13 +148,13 @@ public class WebServer {
 			head = new String(head.getBytes("utf-8"),"utf-8");
 			byte[] bytes = new byte[1024];
 			bytes = (head + "\r\n" + "<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n").getBytes();
-			fos.write(bytes);
+			os.write(bytes);
 			System.out.println("404");
 		} finally {
 				// 最后关闭各种管道
-			fos.flush();
+			os.flush();
 
-			fos.close();
+			os.close();
 				// 如果文件不存在则不存在fis的关闭
 			if (fis != null) {
 				fis.close();
