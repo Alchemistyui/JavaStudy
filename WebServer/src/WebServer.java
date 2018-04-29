@@ -3,7 +3,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.RandomAccessFile;
+import java.io.FileReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -28,6 +31,67 @@ public class WebServer {
 		System.out.println("Serving HTTP  ...");
 	}
 
+// String HANDLERS, String EVENTS
+	void writeLog(String REQUEST, String HOST) throws IOException {
+		// String newPath = path + "/log.xml";
+
+		File tmp=File.createTempFile("tmp", null);
+		tmp.deleteOnExit();//在JVM退出时删除
+
+		// System.out.println(newPath);
+		//以读写的方式建立一个RandomAccessFile对象
+		RandomAccessFile raf=new RandomAccessFile(path + "/log.xml", "rw");
+
+
+ //创建一个临时文件夹来保存插入点后的数据
+		FileOutputStream tmpOut=new FileOutputStream(tmp);
+		FileInputStream tmpIn=new FileInputStream(tmp);
+		raf.seek(10);
+		/**将插入点后的内容读入临时文件夹**/
+
+		byte [] buff=new byte[1024];
+        //用于保存临时读取的字节数
+		int hasRead=0;
+        //循环读取插入点后的内容
+		while((hasRead=raf.read(buff))>0){
+            // 将读取的数据写入临时文件中
+			tmpOut.write(buff, 0, hasRead);
+		}  
+
+        //插入需要指定添加的数据
+		raf.seek(10);//返回原来的插入处
+        //追加需要追加的内容
+        String str = " <CD><REQUEST>"+REQUEST+"</REQUEST><HOST>"+HOST+"</HOST></CD>";
+		raf.write(str.getBytes());
+        //最后追加临时文件中的内容
+		while((hasRead=tmpIn.read(buff))>0){
+			raf.write(buff,0,hasRead);
+		}  
+
+		// //将记录指针移动到文件最后
+		// raf.seek(10);
+		// raf.write(" <CD><HANDLERS>em</HANDLERS><EVENTS>23</EVENTS></CD>".getBytes());
+
+		// File f = new File(path + "log.xml");
+
+		// if (!f.exists()) {
+		// 	System.out.println("Log file doesn't exit.");
+		// 	return;
+		// }
+
+
+		// FileWriter fw = new FileWriter(f);
+		// BufferedWriter bw = new BufferedWriter(fw);
+
+		// String str = null;
+
+		// while ((str = br.readLine()) != null) {
+		// 	bw.write(str);
+		// 	bw.newLine();
+		// }
+		// bw.flush();
+		// bw.close();
+	}
 
 	void serve() throws IOException {
 		// 服务器一直提供服务
@@ -41,21 +105,18 @@ public class WebServer {
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			// 得到请求报文第一行
 			String url = br.readLine();
-			System.out.println(url);
+			String host = br.readLine();
+			
+			// System.out.println(url);
+			// System.out.println(host);
+			
+			// writeLog(url, host);
 
-
-			// if (resource.equals("/console.html")) {
-			// 	returnConsole(newPath, accept, resource);
-			// }
-			// else if (resource.indexOf("/console.html?")!=-1) {
 			if (url.split(" ")[1].indexOf("/console.html?")!=-1) {
 				String str = url.split(" ")[1].split("=")[1];
-				// port = (int) resource.split("=");
-				// path = str.replace("%2F", "/");
-				// System.out.println(str.replace("%2F", "/"));
 				path = str.replace("%2F", "/");
-				// System.out.println(path);
-
+				// String msg = "Change path: "+path;
+				// writeLog(msg, host);
 			}
 			else {
 				String resource = getResource(url);
@@ -64,7 +125,10 @@ public class WebServer {
 				String newPath = path + resource;
 			// System.out.println(newPath);
 				responseResource(newPath, accept, resource);
+				writeLog(url, host);
 			}
+
+
 		}
 	}
 
@@ -169,9 +233,10 @@ public class WebServer {
 	public static void main(String[] args) throws IOException {
 		// 构建服务器对象
 		WebServer server = new WebServer();
+		// server.writeLog();
 		// 服务器开始提供服务
 		server.serve();
-		
-		
+
+
 	}
 }
